@@ -1,0 +1,78 @@
+---
+title: "Visualizacion"
+author: "David Calderon"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+#1) creo la primera grafica \# primero debo crear los datos y el data frame
+
+```{r}
+#pulgones que hay en una hoja
+NHoja = seq(1:20)
+NEscarabajos = c(39,31,34,28,33,22,26,27,20,23,25,20,9,19,12,16,11,12,17,10)
+Tratamiento = rep((c("A","B","C")),c(5,7,8))
+
+df=data.frame(NHoja,NEscarabajos,Tratamiento) 
+df
+```
+
+```{r}
+# instalamos y cargamos la libreria "ggplot2"
+#install.packages("ggplot2") 
+library (ggplot2)
+```
+
+```{r}
+#Para crear un gráfico de barras se sigue la siguiente estructura.
+
+#ggplot(data=df, aes(x=Tratamiento)) + geom_bar(stat="bin")
+#ggplot(data=df, aes(x=Tratamiento)) + geom_bar()
+
+```
+
+```{r}
+ggplot(data=df, aes(x=NHoja, y=NEscarabajos)) + geom_bar(stat="identity")
+
+
+```
+
+En el eje de abcisas no apareceran representados todos los número de hojas, esto sucede porque R ha visto que hemos creado un vector con números y por defecto le ha dado el caracter numérico a esa variable, por eso Cambiaremos la clase a factor.
+
+```{r}
+str(df)
+
+```
+
+```{r}
+is.numeric(df$NHoja)
+
+```
+
+```{r}
+class(df$NHoja)
+
+```
+
+```{r}
+df$NHoja = as.factor(df$NHoja)
+
+```
+
+```{r}
+#comprobamos
+str(df)
+
+```
+
+```{r}
+ggplot(data=df, aes(x=NHoja, y=NEscarabajos)) + geom_bar(stat="identity")
+
+```
+
+ordenamos las barras, para que aparezcan las parcelas con orden decreciente, según el número de plantas, pero distinguiendo con el relleno las de los distintos tratamientos.
+
+```{r}
+ggplot(data=df, aes(x=reorder(NHoja,-NEscarabajos), y=NEscarabajos, fill=Tratamiento)) + 
+    geom_bar(stat="identity", position="dodge")
+```
