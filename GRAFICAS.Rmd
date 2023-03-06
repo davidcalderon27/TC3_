@@ -1,0 +1,167 @@
+---
+title: "GRAFICAS"
+author: "David Calderon"
+date: "`5/3/23`"
+output: html_document
+---
+
+#uso datos de los paquetes de r
+
+
+#1) creo la primera grafica \# primero debo crear los datos y el data frame
+
+```{r}
+#pulgones que hay en una hoja
+NHoja = seq(1:20)
+NEscarabajos = c(39,31,34,28,33,22,26,27,20,23,25,20,9,19,12,16,11,12,17,10)
+Tratamiento = rep((c("A","B","C")),c(5,7,8))
+
+df=data.frame(NHoja,NEscarabajos,Tratamiento) 
+df
+```
+
+```{r}
+# instalamos y cargamos la libreria "ggplot2"
+#install.packages("ggplot2") 
+library (ggplot2)
+```
+
+```{r}
+#Para crear un gráfico de barras se sigue la siguiente estructura.
+
+#ggplot(data=df, aes(x=Tratamiento)) + geom_bar(stat="bin")
+#ggplot(data=df, aes(x=Tratamiento)) + geom_bar()
+
+```
+
+
+
+En el eje de abcisas no apareceran representados todos los número de hojas, esto sucede porque R ha visto que hemos creado un vector con números y por defecto le ha dado el caracter numérico a esa variable, por eso Cambiaremos la clase a factor.
+
+```{r}
+str(df)
+
+```
+
+```{r}
+is.numeric(df$NHoja)
+
+```
+
+```{r}
+class(df$NHoja)
+
+```
+
+```{r}
+df$NHoja = as.factor(df$NHoja)
+
+```
+
+```{r}
+#comprobamos
+str(df)
+
+```
+
+
+ordenamos las barras, para que aparezcan las parcelas con orden decreciente, según el número de plantas, pero distinguiendo con el relleno las de los distintos tratamientos.
+
+```{r}
+ggplot(data=df, aes(x=reorder(NHoja,-NEscarabajos), y=NEscarabajos, fill=Tratamiento)) + 
+    geom_bar(stat="identity", position="dodge")
+```
+
+```{r}
+```
+
+
+```{r}
+library(ggplot2)
+```
+##graficos de areas bajo una curva
+```{r}
+# GRAFICO DE AREA
+qplot(x=wt, geom="density", group=factor(cyl), colour=factor(cyl),
+      fill=factor(cyl),alpha=I(.5),data=mtcars)
+
+```
+###gráfica diagrama de dispersion con estimacion 
+
+
+```{r}
+library(ggplot2)
+
+set.seed(42)
+n <- 1000
+x <- runif(n) * 3
+y <- x * sin(1/x) + rnorm(n) / 25
+df <- data.frame(x = x, y = y)
+
+p2 <- ggplot(df, aes(x, y)) +
+    geom_point(alpha = 0.3) +
+    geom_smooth(se = FALSE) +
+    scale_x_continuous(limits = c(0, 0.5)) +
+    scale_y_continuous(limits = c(-0.3, 0.6)) +
+    theme_bw()
+p2
+```
+##diagrama de puntos 
+
+```{r}
+##install.packages("ggpubr")
+library("ggpubr")
+```
+
+```{r}
+dp <- ggdotplot(ToothGrowth, x = "dose", y = "len",
+                 color = "pink", palette = "jco", binwidth = 1)
+dp
+```
+###diagrama de dispersion
+```{r}
+library(ggplot2)
+g <- ggplot(mpg, aes(x=displ, y=hwy, color=drv))
+g + geom_point() + geom_smooth(method="lm")
+```
+##gráfica_ mapa de calor
+
+
+```{r}
+library(MASS)
+url <- 'https://raw.githubusercontent.com/fhernanb/datos/master/medidas_cuerpo'
+datos <- read.table(file=url, header=T)
+
+###
+f1 <- kde2d(x=datos$peso, y=datos$altura, n=5)
+f2 <- kde2d(x=datos$peso, y=datos$altura, n=50)
+```
+
+```{r}
+par(mfrow=c(1, 2))
+image(f1, xlab='Peso', ylab='Estatura', main='n=5')
+image(f2, xlab='Peso', ylab='Estatura', main='n=50')
+```
+
+
+##Grafica dinámica;dispersion por grupos;
+#usaremos datos de la libreria "gapminder"
+```{r}
+#install.packages("gapminder")
+library(gapminder)
+datos = gapminder
+head(datos)
+library(ggplot2)
+library(dplyr)
+
+grafico <- datos %>%
+  ggplot() + 
+    geom_point(aes(x = gdpPercap, y = lifeExp, col = continent, size = pop), alpha = 0.8) + theme_minimal() + 
+    theme(legend.position = "bottom") + guides(size = "none") + 
+    labs(x = "PIB per Capita" ,y = "Esperanza de Vida",  col = "") 
+
+grafico
+```
+
+
+
